@@ -11,8 +11,10 @@ def index(request):
 
 
 def all_emp(request):
+    # emps = Employee.objects.all()
     emps = Employee.objects.filter(
-        Q(dept__dept__contains="Developer") & Q(salary="1600000") | Q(dept__dept__contains="HR"))
+        (Q(dept__dept__contains="Developer") & Q(salary__gte="1600000")) |
+        Q(dept__dept__contains="HR") & Q(bonous__lte=100000))
     context = {
         'emps': emps
     }
