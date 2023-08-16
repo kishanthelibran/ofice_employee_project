@@ -11,8 +11,10 @@ def index(request):
 
 
 def all_emp(request):
+    # emps = Employee.objects.all()
     emps = Employee.objects.filter(
-        Q(dept__dept__contains="Developer") & Q(salary="1600000") | Q(dept__dept__contains="HR"))
+        (Q(dept__dept__contains="Developer") & Q(salary__gte="1600000")) |
+        Q(dept__dept__contains="HR") & Q(bonous__lte=100000))
     context = {
         'emps': emps
     }
@@ -41,8 +43,22 @@ def add_emp(request):
         return HttpResponse('Exception Raised')
 
 
-def remove_emp(request):
-    return render(request, 'remove_emp.html')
+def remove_emp(request, emp_id=0):
+    if emp_id:
+        try:
+            emp_to_be_remmoved = Employee.objects.get(id=emp_id)
+            emp_to_be_remmoved.delete()
+            return HttpResponse('Employee Deleted')
+        except:
+            return HttpResponse('Enter Valid Employee Id')
+        else:
+            return HttpResponse('Successfully')
+
+    get_employee = Employee.objects.all()
+    context = {
+        "emp_id": get_employee
+    }
+    return render(request, 'remove_emp.html', context)
 
 
 def filter_emp(request):
